@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.agx</groupId>
+        <artifactId>agx-a-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.agx</groupId>
+
+    <artifactId>agx-sample</artifactId>
+
+    <version>${revision}</version>
+
+    <description>项目样例模板</description>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- 产品版本号 -->
+        <product.version>1.0.0</product.version>
+        <!-- 构建版本号 -->
+        <build.version>SNAPSHOT</build.version>
+        <!-- 产品统一版本 -->
+        <revision>${product.version}-${build.version}</revision>
+
+        <apx-root.version>1.0.0</apx-root.version>
+    </properties>
+
+    <modules>
+        <module>sample-api</module>
+        <module>sample-biz</module>
+        <module>sample-app</module>
+    </modules>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
