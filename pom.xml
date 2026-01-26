@@ -28,7 +28,7 @@
         <!-- 产品统一版本 -->
         <revision>${product.version}-${build.version}</revision>
 
-        <apx-root.version>1.0.0</apx-root.version>
+        <agx-root.version>1.0.0</agx-root.version>
     </properties>
 
     <modules>
