@@ -1,7 +1,6 @@
 package com.agx.sample.app;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
@@ -13,15 +12,14 @@ import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
  * @since 2020/12/1 17:50
  */
 @Slf4j
-//@MapperScan(basePackages = {"com.test.**.mapper"})
 @SpringBootApplication(
         scanBasePackages = {"cn.stylefeng", "com.agx"},
         exclude = {FlywayAutoConfiguration.class}
 )
 public class ProjectStartApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(ProjectStartApplication.class, args);
-        log.info(ProjectStartApplication.class.getSimpleName() + " is success!");
     }
 
 }

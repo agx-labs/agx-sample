@@ -6,7 +6,7 @@ server:
 
 spring:
   application:
-    name: agx-sample-app
+    name: sample-app
   profiles:
     active: @spring.active@
   main:
