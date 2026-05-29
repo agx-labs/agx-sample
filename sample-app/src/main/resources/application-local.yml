@@ -4,13 +4,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.12:10001/sample?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.192.192.252:3307/sample?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
-
+    password: eureka,123
     # 连接池大小根据实际情况调整
-    max-active: 100
-    max-pool-prepared-statement-per-connection-size: 100
+    max-active: 10
+    max-pool-prepared-statement-per-connection-size: 20
 
 
 #任务调度中心
@@ -21,7 +20,7 @@ xxl:
       addresses: http://192.168.1.12:8081/xxl-job-admin
       timeout: 3
     executor:
-      enabled: true
+      enabled: false
       appName: job-executor-sample-app
       logPath: ./app-log/xxl-job/sample-app
       logRetentionDays: 7
