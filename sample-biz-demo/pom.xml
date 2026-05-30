@@ -3,36 +3,41 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.agx</groupId>
         <artifactId>agx-sample</artifactId>
         <relativePath>../pom.xml</relativePath>
         <version>${revision}</version>
     </parent>
-
-    <artifactId>sample-app</artifactId>
+    <artifactId>sample-biz-demo</artifactId>
 
     <dependencies>
-
-        <!-- 默认:基于内存 -->
-        <dependency>
-            <groupId>com.javaguns.roses</groupId>
-            <artifactId>cache-spring-boot-starter-memory</artifactId>
-        </dependency>
-
-        <!-- 任务管理 -->
         <dependency>
             <groupId>com.agx</groupId>
-            <artifactId>task-spring-boot-starter-xxljob</artifactId>
+            <artifactId>task-api</artifactId>
             <version>${agx-root.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.agx</groupId>
-            <artifactId>sample-biz-demo</artifactId>
+            <artifactId>sample-api</artifactId>
             <version>${revision}</version>
         </dependency>
-    </dependencies>
 
+        <!--内存缓存-->
+        <dependency>
+            <groupId>com.javaguns.roses</groupId>
+            <artifactId>cache-sdk-memory</artifactId>
+            <version>${roses.kernel.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!--Redis缓存-->
+        <dependency>
+            <groupId>com.agx</groupId>
+            <artifactId>cache-sdk-redis</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+
+    </dependencies>
 </project>

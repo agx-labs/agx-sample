@@ -33,7 +33,7 @@
 
     <modules>
         <module>sample-api</module>
-        <module>sample-biz</module>
+        <module>sample-biz-demo</module>
         <module>sample-app</module>
     </modules>
 
