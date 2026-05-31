@@ -1,0 +1,614 @@
+<!-- 主题设置抽屉 -->
+<template>
+  <a-drawer
+    :width="280"
+    :visible="visible"
+    :body-style="{ padding: 0 }"
+    :header-style="{
+      position: 'absolute',
+      top: '16px',
+      right: 0,
+      padding: 0,
+      background: 'none'
+    }"
+    :z-index="1001"
+    @update:visible="updateVisible"
+  >
+    <div :class="['guns-setting-wrapper', { 'guns-setting-dark': darkMode }]">
+      <div class="guns-setting-title">{{ t('layout.setting.title') }}</div>
+      <!-- 侧栏风格 -->
+      <div v-if="layoutStyle !== 'top'" class="guns-setting-theme guns-text-primary">
+        <a-tooltip :title="t('layout.setting.sideStyles.dark')">
+          <div class="guns-bg-base guns-side-dark" @click="updateSideStyle('dark')">
+            <check-outlined v-if="sideStyle === 'dark'" />
+          </div>
+        </a-tooltip>
+        <a-tooltip :title="t('layout.setting.sideStyles.light')">
+          <div class="guns-bg-base" @click="updateSideStyle('light')">
+            <check-outlined v-if="sideStyle === 'light'" />
+          </div>
+        </a-tooltip>
+      </div>
+      <!-- 主题色 -->
+      <div class="guns-setting-colors">
+        <div
+          v-for="item in themes"
+          :key="item.name"
+          :style="{ 'background-color': item.color || item.value }"
+          class="guns-setting-color-item"
+          @click="updateColor(item.value)"
+        >
+          <check-outlined v-if="item.value ? item.value === color : !color" />
+          <a-tooltip :title="t('layout.setting.colors.' + item.name)">
+            <div class="guns-setting-color-tooltip"></div>
+          </a-tooltip>
+        </div>
+        <!-- 颜色选择器 -->
+        <color-picker
+          v-model:value="colorValue"
+          :predefine="predefineColors"
+          custom-class="guns-setting-color-picker"
+          @change="updateColor"
+        />
+      </div>
+      <a-divider />
+      <!-- 应用配置 -->
+      <div class="guns-setting-title guns-text-secondary hidden-xs-only">
+        {{ t('layout.setting.applicationLocation') }}
+      </div>
+      <a-row :gutter="[16, 16]" class="guns-new-setting">
+        <a-col :span="12">
+          <div class="guns-new-setting-theme" @click="updateApplicationStyle('top')">
+            <div class="guns-new-setting-img" :class="appActive('top')">
+              <AppTopNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.applicationLocationStyles.top') }}
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="12">
+          <div class="guns-new-setting-theme" @click="updateApplicationStyle('default')">
+            <div class="guns-new-setting-img" :class="appActive('default')">
+              <AppSiderNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.applicationLocationStyles.side') }}
+            </div>
+          </div>
+        </a-col>
+      </a-row>
+      <a-divider class="hidden-xs-only" />
+      <!-- 导航布局 -->
+      <div class="guns-setting-title guns-text-secondary hidden-xs-only">
+        {{ t('layout.setting.layoutStyle') }}
+      </div>
+      <a-row :gutter="[16, 16]" class="guns-new-setting">
+        <a-col :span="12">
+          <div class="guns-new-setting-theme" @click="updateLayoutStyle('side')">
+            <div class="guns-new-setting-img" :class="navActive('side')">
+              <SidebarNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.layoutStyles.side') }}
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="12">
+          <div class="guns-new-setting-theme" @click="updateSideMenuStyle">
+            <div class="guns-new-setting-img" :class="navActive('side', 'double')">
+              <SidebarMixedNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.layoutStyles.leftDouble') }}
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="12" v-if="applicationStyle == 'default'">
+          <div class="guns-new-setting-theme" @click="updateLayoutStyle('top')">
+            <div class="guns-new-setting-img" :class="navActive('top')">
+              <HeaderNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.layoutStyles.top') }}
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="12" v-if="applicationStyle == 'default'">
+          <div class="guns-new-setting-theme" @click="updateLayoutStyle('mix')">
+            <div class="guns-new-setting-img" :class="navActive('mix')">
+              <HeaderMixedNav />
+            </div>
+            <div class="guns-new-setting-title">
+              {{ t('layout.setting.layoutStyles.mix') }}
+
+              <a-tooltip :title="t('layout.setting.layoutStyles.tool')">
+                <question-circle-outlined />
+              </a-tooltip>
+            </div>
+          </div>
+        </a-col>
+      </a-row>
+
+      <a-divider class="hidden-xs-only" />
+      <div class="guns-setting-title guns-text-secondary">
+        {{ t('layout.setting.other') }}
+      </div>
+      <!-- 全局页脚 -->
+      <div class="guns-setting-item">
+        <div class="setting-item-title">
+          {{ t('layout.setting.showFooter') }}
+        </div>
+        <div class="setting-item-control">
+          <a-switch size="small" :checked="showFooter" @change="updateShowFooter" />
+        </div>
+      </div>
+      <!-- 色弱模式 -->
+      <div class="guns-setting-item">
+        <div class="setting-item-title">{{ t('layout.setting.weakMode') }}</div>
+        <div class="setting-item-control">
+          <a-switch size="small" :checked="weakMode" @change="updateWeakMode" />
+        </div>
+      </div>
+
+      <!-- 侧栏排他展开 -->
+      <div class="guns-setting-item">
+        <div class="setting-item-title">{{ t('layout.setting.sideUniqueOpen') }}</div>
+        <div class="setting-item-control">
+          <a-switch size="small" :checked="sideUniqueOpen" @change="updateSideUniqueOpen" />
+        </div>
+      </div>
+      <!-- 默认展开所有侧栏 -->
+      <div class="guns-setting-item">
+        <div class="setting-item-title">{{ t('layout.setting.sideInitOpenAll') }}</div>
+        <div class="setting-item-control">
+          <a-switch size="small" :checked="sideInitOpenAll" :disabled="sideUniqueOpen" @change="updateSideInitOpenAll" />
+        </div>
+      </div>
+      <a-divider class="hidden-xs-only" />
+      <div class="guns-setting-title guns-text-secondary">
+        {{ t('layout.setting.tabsConfig') }}
+      </div>
+      <!-- 页签 -->
+      <div class="guns-setting-item">
+        <div class="setting-item-title">{{ t('layout.setting.showTabs') }}</div>
+        <div class="setting-item-control">
+          <a-switch size="small" :checked="showTabs" @change="updateShowTabs" />
+        </div>
+      </div>
+      <!-- 页签风格 -->
+      <div v-if="showTabs" class="guns-setting-item">
+        <div class="setting-item-title">{{ t('layout.setting.tabStyle') }}</div>
+        <div class="setting-item-control">
+          <a-select size="small" :value="tabStyle" style="width: 80px" @change="updateTabStyle">
+            <a-select-option value="default">
+              {{ t('layout.setting.tabStyles.default') }}
+            </a-select-option>
+            <a-select-option value="dot">
+              {{ t('layout.setting.tabStyles.dot') }}
+            </a-select-option>
+            <a-select-option value="card">
+              {{ t('layout.setting.tabStyles.card') }}
+            </a-select-option>
+          </a-select>
+        </div>
+      </div>
+      <!-- 提示 -->
+      <a-divider />
+      <a-alert show-icon type="warning" :message="t('layout.setting.tips')">
+        <template #icon>
+          <sound-outlined />
+        </template>
+      </a-alert>
+      <!-- 重置 -->
+      <a-button block type="dashed" @click="resetSetting">
+        {{ t('layout.setting.reset') }}
+      </a-button>
+    </div>
+  </a-drawer>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { storeToRefs } from 'pinia';
+import { message } from 'ant-design-vue/es';
+import { CheckOutlined, SoundOutlined } from '@ant-design/icons-vue';
+import { messageLoading } from '@/components/layout/util';
+import { useThemeStore } from '@/store/modules/theme';
+import { HeaderMixedNav, HeaderNav, SidebarMixedNav, SidebarNav, AppTopNav, AppSiderNav } from '../icons';
+
+defineProps({
+  // drawer 是否显示, v-model
+  visible: Boolean
+});
+
+const emit = defineEmits(['update:visible']);
+
+const { t } = useI18n();
+const themeStore = useThemeStore();
+
+const {
+  showTabs,
+  tabStyle,
+  showFooter,
+  sideStyle,
+  layoutStyle,
+  weakMode,
+  darkMode,
+  color,
+  sideUniqueOpen,
+  sideInitOpenAll,
+  sideMenuStyle,
+  applicationStyle
+} = storeToRefs(themeStore);
+
+// 主题列表
+const themes = ref([
+  {
+    name: 'default',
+    color: '#1890ff'
+  },
+  {
+    name: 'dust',
+    value: '#5f80c7'
+  },
+  {
+    name: 'sunset',
+    value: '#faad14'
+  },
+  {
+    name: 'volcano',
+    value: '#f5686f'
+  },
+  {
+    name: 'purple',
+    value: '#9266f9'
+  },
+  {
+    name: 'green',
+    value: '#33cc99'
+  },
+  {
+    name: 'geekblue',
+    value: '#32a2d4'
+  }
+]);
+
+// 颜色选择器预设颜色
+const predefineColors = ref(['#f5222d', '#fa541c', '#fa8c16', '#faad14', '#a0d911', '#52c41a', '#13c2c2', '#2f54eb', '#722ed1', '#eb2f96']);
+
+// 颜色选择器选中颜色
+const colorValue = ref(void 0);
+
+const navActive = (theme, type = '') => {
+  if (layoutStyle.value == theme && theme == 'side') {
+    if (sideMenuStyle.value == 'mix' && type == 'double') {
+      return ['guns-new-setting-img-active'];
+    } else if (!type && sideMenuStyle.value == 'default') {
+      return ['guns-new-setting-img-active'];
+    }
+    return [];
+  } else {
+    return theme === layoutStyle.value ? ['guns-new-setting-img-active'] : [];
+  }
+};
+
+const appActive = (theme) => {
+  return theme === applicationStyle.value ? ['guns-new-setting-img-active'] : [];
+}
+
+const updateVisible = value => {
+  emit('update:visible', value);
+};
+
+const updateShowTabs = value => {
+  themeStore.setShowTabs(value);
+};
+
+const updateApplicationStyle = value => {
+  themeStore.setApplicationStyle(value);
+
+  if (value == 'top' && (layoutStyle.value == 'top' || layoutStyle.value == 'mix')) {
+     themeStore.setLayoutStyle('side');
+  }
+}
+
+const updateShowFooter = value => {
+  themeStore.setShowFooter(value);
+};
+
+const updateSideStyle = value => {
+  themeStore.setSideStyle(value);
+};
+
+const updateLayoutStyle = value => {
+  themeStore.setLayoutStyle(value);
+  themeStore.setSideMenuStyle('default');
+
+  if (value == 'top' || value == 'mix') {
+    updateApplicationStyle('default');
+  }
+};
+
+const updateSideMenuStyle = () => {
+  themeStore.setLayoutStyle('side');
+  themeStore.setSideMenuStyle('mix');
+};
+
+const updateTabStyle = value => {
+  themeStore.setTabStyle(value);
+};
+
+const updateWeakMode = value => {
+  themeStore.setWeakMode(value);
+};
+
+const updateSideUniqueOpen = value => {
+  themeStore.setSideUniqueOpen(value);
+  if (value) {
+    themeStore.setSideInitOpenAll(false);
+  }
+};
+
+const updateSideInitOpenAll = value => {
+  themeStore.setSideInitOpenAll(value);
+};
+
+const updateColor = value => {
+  doWithLoading(() => themeStore.setColor(value));
+};
+
+const resetSetting = () => {
+  doWithLoading(() => themeStore.resetSetting());
+};
+
+const doWithLoading = fun => {
+  const hide = messageLoading('正在加载主题..', 0);
+  setTimeout(() => {
+    fun()
+      .then(() => {
+        hide();
+        initColorValue();
+      })
+      .catch(e => {
+        hide();
+        message.error('主题加载失败');
+      });
+  }, 0);
+};
+
+const initColorValue = () => {
+  if (color?.value && !themes.value.some(t => t.value === color.value)) {
+    colorValue.value = color.value;
+  } else {
+    colorValue.value = void 0;
+  }
+};
+
+initColorValue();
+</script>
+
+<style lang="less">
+.guns-setting-wrapper {
+  padding: 20px 18px;
+
+  .guns-setting-title {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
+  .guns-new-setting {
+    margin-bottom: 20px;
+
+    .guns-new-setting-theme {
+      width: 100px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+
+      .guns-new-setting-img {
+        outline-style: solid;
+        outline-width: 1px;
+        outline-color: hsl(240 5.9% 90%);
+        position: relative;
+        cursor: pointer;
+        border-radius: calc(0.5rem - 2px);
+        padding: 0.25rem;
+
+        &:hover {
+          outline-style: solid;
+          outline-width: 2px;
+          outline-color: var(--primary-color);
+        }
+
+        .custom-radio-image {
+          width: 100%;
+          height: 70px;
+        }
+      }
+
+      .guns-new-setting-img-active {
+        outline-style: solid;
+        outline-width: 2px;
+        outline-color: var(--primary-color);
+      }
+
+      .guns-new-setting-title {
+        color: hsl(240 3.8% 46.1%);
+        font-size: 0.75rem;
+        line-height: 1rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+    }
+  }
+
+  /* 主题风格 */
+  .guns-setting-theme > div {
+    width: 52px;
+    height: 36px;
+    line-height: 1;
+    border-radius: 3px;
+    margin: 0 20px 30px 0;
+    padding: 16px 0 0 26px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:before,
+    &:after,
+    & > .guns-bg-primary {
+      content: '';
+      width: 100%;
+      height: 10px;
+      background: #fff;
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: background-color 0.2s;
+    }
+
+    &:after {
+      width: 14px;
+      height: 100%;
+    }
+
+    &.guns-side-dark:after,
+    &.guns-head-dark:before,
+    &.guns-layout-mix:before,
+    &.guns-layout-mix:after {
+      background: #001529;
+    }
+
+    &.guns-head-light:before,
+    &.guns-head-dark:before,
+    & > .guns-bg-primary {
+      z-index: 1;
+    }
+
+    &.guns-layout-top {
+      padding-left: 19px;
+
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  /* 主题色选择 */
+  .guns-setting-colors {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  .guns-setting-color-item {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 2px;
+    margin: 8px 8px 0 0;
+    display: inline-block;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    vertical-align: top;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+
+    .guns-setting-color-tooltip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  /* 主题配置项 */
+  .guns-setting-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .setting-item-title {
+      flex: 1;
+      line-height: 28px;
+    }
+
+    .setting-item-control {
+      line-height: 1;
+    }
+  }
+
+  .ant-divider {
+    margin-bottom: 20px;
+  }
+
+  .ant-alert + .ant-btn {
+    margin-top: 12px;
+  }
+
+  /* 暗黑模式 */
+  &.guns-setting-dark .guns-setting-theme > div {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+
+    &:before,
+    &:after,
+    & > .guns-bg-primary {
+      background: #1f1f1f;
+    }
+
+    &.guns-side-dark:after,
+    &.guns-head-dark:before,
+    &.guns-layout-mix:before,
+    &.guns-layout-mix:after {
+      background: #262626;
+    }
+  }
+}
+
+/* 颜色选择器 */
+.guns-setting-color-picker.guns-color-picker-trigger {
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 8px;
+  border: none !important;
+  background: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+  & > .guns-color-picker-trigger-inner {
+    background: none;
+
+    &.is-empty {
+      background: conic-gradient(
+        from 90deg at 50% 50%,
+        rgb(255, 0, 0) -19.41deg,
+        rgb(255, 0, 0) 18.76deg,
+        rgb(255, 138, 0) 59.32deg,
+        rgb(255, 230, 0) 99.87deg,
+        rgb(20, 255, 0) 141.65deg,
+        rgb(0, 163, 255) 177.72deg,
+        rgb(5, 0, 255) 220.23deg,
+        rgb(173, 0, 255) 260.13deg,
+        rgb(255, 0, 199) 300.69deg,
+        rgb(255, 0, 0) 340.59deg,
+        rgb(255, 0, 0) 378.76deg
+      );
+
+      & + .guns-color-picker-trigger-arrow {
+        display: none;
+      }
+    }
+  }
+}
+</style>
