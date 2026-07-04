@@ -17,6 +17,7 @@
             <artifactId>task-api</artifactId>
             <version>${agx-root.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.agx</groupId>
             <artifactId>sample-api</artifactId>

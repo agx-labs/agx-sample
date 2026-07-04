@@ -16,7 +16,7 @@ export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
   // 在这里增加 base 写子路径，注意这里前后都要有斜杠
   return {
-    base: '/',
+    base: env.VITE_BASE_URL || '/',
     server: {
       host: '0.0.0.0',
       port: 9000,

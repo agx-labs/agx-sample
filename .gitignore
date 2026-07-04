@@ -26,6 +26,8 @@ node_modules/
 # IntelliJ IDEA / STS
 .idea/
 *.iml
+
+
 *.iws
 *.ipr
 .factorypath
