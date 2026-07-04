@@ -12,13 +12,14 @@ spring:
     max-active: 100
     max-pool-prepared-statement-per-connection-size: 100
 
-  # redis配置
-  redis:
-    database: 02
-    host: 192.168.1.12
-    port: 10031
-    password: 123456
-    timeout: 3000
+  data:
+    # redis配置
+    redis:
+      database: 0
+      host: 192.168.1.12
+      port: 10031
+      password: 123456
+      timeout: 3000
 
 #任务调度中心
 xxl:
