@@ -26,14 +26,14 @@
         </dependency>
 
         <!-- 默认:基于Redis -->
-        <dependency>
-            <groupId>com.javaguns.roses</groupId>
+        <!--<dependency>
+            <groupId>com.agx</groupId>
             <artifactId>cache-spring-boot-starter-redis</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- 默认:基于内存 -->
         <dependency>
-            <groupId>com.javaguns.roses</groupId>
+            <groupId>com.agx</groupId>
             <artifactId>cache-spring-boot-starter-memory</artifactId>
         </dependency>
 
@@ -43,6 +43,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- 正式服务 -->
+        <!--<dependency>
+            <groupId>com.agx</groupId>
+            <artifactId>license-spring-boot-starter</artifactId>
+        </dependency>-->
+
+        <!-- 正式生成服务 -->
+        <!--<dependency>
+            <groupId>com.agx</groupId>
+            <artifactId>license-generator</artifactId>
+        </dependency>-->
 
     </dependencies>
 
