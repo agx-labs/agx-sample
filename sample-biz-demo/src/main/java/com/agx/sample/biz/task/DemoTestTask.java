@@ -1,7 +1,7 @@
 package com.agx.sample.biz.task;
 
 import com.agx.root.task.api.engine.TaskExecutionContext;
-import com.agx.root.task.api.handler.TaskHandler;
+import com.agx.root.task.api.handler.BeanTaskHandler;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 2026/5/27 22:48
  */
 @Component
-public class DemoTestTask implements TaskHandler {
+public class DemoTestTask implements BeanTaskHandler {
 
     /**
      * {@inheritDoc}

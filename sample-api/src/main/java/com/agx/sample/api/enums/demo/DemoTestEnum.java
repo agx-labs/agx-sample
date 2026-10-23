@@ -1,6 +1,7 @@
 package com.agx.sample.api.enums.demo;
 
 import cn.hutool.core.util.StrUtil;
+import com.agx.root.core.api.contract.DictEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +16,7 @@ import java.util.Arrays;
  */
 @AllArgsConstructor
 @Getter
-public enum DemoTestEnum {
+public enum DemoTestEnum implements DictEnum {
 
     SUCCESS("success", "成功"),
 
@@ -43,5 +44,15 @@ public enum DemoTestEnum {
      */
     public static DemoTestEnum getEnum(String code) {
         return Arrays.stream(values()).filter(aEnum -> StrUtil.equals(code, aEnum.getCode())).findAny().orElse(null);
+    }
+
+    @Override
+    public String getDictTypeCode() {
+        return "demo_test";
+    }
+
+    @Override
+    public String getDictTypeName() {
+        return "演示字典";
     }
 }

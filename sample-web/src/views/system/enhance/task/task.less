@@ -1,0 +1,31 @@
+.task-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.task-section-heading {
+  margin: 16px 0 8px;
+  font-weight: 600;
+}
+.task-muted,
+.task-subline {
+  color: #999;
+  font-size: 12px;
+}
+.task-code {
+  max-height: 320px;
+  overflow: auto;
+  margin: 0;
+  padding: 8px;
+  background: #f5f5f5;
+  font: 12px/1.6 Consolas, Monaco, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.task-error { margin-bottom: 12px; }
+.task-modal .ant-descriptions-item-content { overflow-wrap: anywhere; }
+.task-modal .task-descriptions .ant-descriptions-item-label { width: 140px; white-space: nowrap; }
+.task-modal .task-descriptions .ant-descriptions-item-content { min-width: 0; }
+.task-modal .ant-modal-body { max-height: 75vh; overflow-y: auto; }

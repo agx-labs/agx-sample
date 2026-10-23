@@ -49,7 +49,10 @@ export function findTree(treeData = [], search, matchKey = 'id', childrenKey = '
     if (treeItem[childrenKey] && treeItem[childrenKey].length) {
       resultItem[childrenKey] = findTree(treeItem[childrenKey], search, matchKey, childrenKey);
     }
-    if (search === treeItem[matchKey]) {
+    const itemValue = treeItem[matchKey];
+    const normalizedItemValue = matchKey === 'path' && typeof itemValue === 'string' ? itemValue.split(/[?#]/)[0] : itemValue;
+    const normalizedSearch = matchKey === 'path' && typeof search === 'string' ? search.split(/[?#]/)[0] : search;
+    if (normalizedSearch === normalizedItemValue) {
       resultItem = { ...treeItem };
     }
     if (resultItem[matchKey]) {

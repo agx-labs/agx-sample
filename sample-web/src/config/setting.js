@@ -10,6 +10,12 @@ export const SSO_FLAG = false;
 // 是否使用多租户
 export const SAAS_FLAG = false;
 
+// 是否显示组织切换
+export const SHOW_ORG_SWITCH = true;
+
+// 是否显示通知入口
+export const SHOW_NOTICE = true;
+
 // 是否显示修改主题
 export const SHOW_THEME = false;
 

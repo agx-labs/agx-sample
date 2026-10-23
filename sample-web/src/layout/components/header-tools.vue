@@ -2,7 +2,7 @@
 <template>
   <div class="guns-admin-header-tool">
     <!-- 公司切换 -->
-    <div class="guns-admin-header-tool-item" v-if="companyData?.companyName && !isMobile" @click="switchCompany">
+    <div class="guns-admin-header-tool-item" v-if="SHOW_ORG_SWITCH && companyData?.companyName && !isMobile" @click="switchCompany">
       <i class="iconfont icon-nav-gongsi f-s-24"></i>
       <span class="company-name">{{ companyData?.companyName }}</span>
     </div>
@@ -15,7 +15,7 @@
       <i18n-icon class="f-s-24" />
     </div>
     <!-- 消息通知 -->
-    <div class="guns-admin-header-tool-item">
+    <div v-if="SHOW_NOTICE" class="guns-admin-header-tool-item">
       <header-notice />
     </div>
     <!-- 用户信息 -->
@@ -71,7 +71,7 @@
   <!-- 切换应用抽屉 -->
   <app-switch-modal v-if="showAppVisible" v-model:visible="showAppVisible"></app-switch-modal>
   <!-- 切换公司 -->
-  <SwitchCompany v-if="showSwitchCompany" v-model:visible="showSwitchCompany" :selectOrgId="companyData.orgId"></SwitchCompany>
+  <SwitchCompany v-if="SHOW_ORG_SWITCH && showSwitchCompany" v-model:visible="showSwitchCompany" :selectOrgId="companyData.orgId"></SwitchCompany>
 </template>
 
 <script setup>
@@ -86,7 +86,7 @@ import SettingDrawer from './setting-drawer.vue';
 import { useUserStore } from '@/store/modules/user';
 import { logout } from '@/utils/page-tab-util';
 import { LoginApi } from '@/views/login/login/api/LoginApi';
-import { SSO_FLAG, SHOW_THEME, SHOW_I18n } from '@/config/setting';
+import { SSO_FLAG, SHOW_THEME, SHOW_I18n, SHOW_ORG_SWITCH, SHOW_NOTICE } from '@/config/setting';
 import { SsoUtil } from '@/utils/common/sso-util';
 import { removeToken } from '@/utils/token-util';
 import AppSwitchModal from './app-switch-modal.vue';
