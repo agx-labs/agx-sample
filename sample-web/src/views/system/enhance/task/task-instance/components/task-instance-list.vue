@@ -52,6 +52,9 @@
         <a-space :size="16">
           <icon-font iconClass="icon-opt-xiangqing" font-size="24px" color="#60666b" title="详情" @click="openDetail(record)" />
           <a @click="openLog(record)">运行日志</a>
+          <a-tooltip v-if="record.handleResult === 'running'" title="刷新状态">
+            <reload-outlined style="font-size: 18px; color: #1890ff; cursor: pointer" @click="refreshInstance(record)" />
+          </a-tooltip>
           <a-tooltip :title="record.handleResult === 'fail' ? '重试' : '仅失败实例可重试'">
             <a :class="{ disabledAction: record.handleResult !== 'fail' }" @click="retry(record)">重试</a>
           </a-tooltip>
@@ -66,6 +69,7 @@
 <script setup>
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import { message, Modal } from 'ant-design-vue/es';
+import { ReloadOutlined } from '@ant-design/icons-vue';
 import { TaskInstanceApi } from '../api/TaskInstanceApi';
 import TaskInstanceDetail from './task-instance-detail.vue';
 import TaskInstanceLog from './task-instance-log.vue';
@@ -82,7 +86,7 @@ const allColumns = [
   { dataIndex: 'startTime', title: '开始时间', width: 175, isShow: true },
   { dataIndex: 'endTime', title: '结束时间', width: 175, isShow: true },
   { key: 'duration', title: '耗时', width: 100, isShow: true },
-  { key: 'action', title: '操作', width: 190, isShow: true }
+  { key: 'action', title: '操作', width: 220, isShow: true }
 ];
 const columns = computed(() => props.embedded
   ? allColumns.filter((column) => !['taskName', 'taskCode'].includes(column.dataIndex))
@@ -100,6 +104,10 @@ const reload = () => tableRef.value?.reload();
 const reset = () => { where.value = createWhere(); reload(); };
 const openDetail = record => { current.value = record; showDetail.value = true; };
 const openLog = record => { showDetail.value = false; logRecord.value = record; showLog.value = true; };
+const refreshInstance = async record => {
+  await TaskInstanceApi.refresh({ taskInstId: record.taskInstId });
+  reload();
+};
 const retry = record => {
   if (record.handleResult !== 'fail' || retryModal) return;
   retryModal = Modal.confirm({

@@ -103,7 +103,7 @@ export function formatParams(value) {
 
 export function durationOf(record) {
   if (!record.startTime) return '—';
-  if (!record.endTime) return record.handleResult === 'running' ? '执行中' : '—';
+  if (!record.endTime) return record.handleResult === 'running' ? '-' : '—';
   const start = dayjs(record.startTime);
   const end = dayjs(record.endTime);
   if (!start.isValid() || !end.isValid() || end.isBefore(start)) return '—';

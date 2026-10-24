@@ -15,6 +15,13 @@ export class TaskInstanceApi {
     return Request.postAndLoadData('/taskInstance/get', params);
   }
   /**
+   * 从调度器刷新任务实例状态
+   * POST /taskInstance/refresh
+   */
+  static refresh(params) {
+    return Request.post('/taskInstance/refresh', params);
+  }
+  /**
    * 获取任务实例列表
    * POST /taskInstance/list
    */
