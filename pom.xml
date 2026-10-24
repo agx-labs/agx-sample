@@ -60,32 +60,12 @@
     </distributionManagement>
 
     <profiles>
-        <!-- ===================== 发布 profile ===================== -->
         <profile>
-            <!-- 激活方式：mvn clean deploy -P release -->
-            <id>dev</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Compiler -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                    </plugin>
-                    <!-- Source -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                    <!-- Javadoc -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
+            <id>nexus</id>
+            <modules>
+                <module>sample-api</module>
+                <module>sample-biz-demo</module>
+            </modules>
         </profile>
     </profiles>
 </project>
