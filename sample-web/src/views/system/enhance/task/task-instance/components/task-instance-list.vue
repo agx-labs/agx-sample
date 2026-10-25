@@ -8,7 +8,7 @@
   >
     <template #toolLeft>
       <template v-if="!props.embedded">
-        <a-input v-model:value="where.taskName" class="search-input" :bordered="false" allow-clear placeholder="任务名称（回车搜索）" @pressEnter="reload">
+        <a-input v-model:value="where.keyword" class="search-input" :bordered="false" allow-clear placeholder="任务名称或编码（回车搜索）" @pressEnter="reload">
           <template #prefix><icon-font iconClass="icon-opt-search" /></template>
         </a-input>
         <a-divider type="vertical" class="divider" />
@@ -31,6 +31,12 @@
               <a-select-option v-for="item in handleResults" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
             </a-select>
           </a-form-item>
+          <a-form-item label="开始时间">
+            <a-range-picker v-model:value="startTimeRange" value-format="YYYY-MM-DD" allow-clear @change="onStartTimeRangeChange" />
+          </a-form-item>
+          <a-form-item label="结束时间">
+            <a-range-picker v-model:value="endTimeRange" value-format="YYYY-MM-DD" allow-clear @change="onEndTimeRangeChange" />
+          </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="reload">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
@@ -49,11 +55,9 @@
       </template>
       <template v-else-if="column.key === 'duration'">{{ durationOf(record) }}</template>
       <template v-else-if="column.key === 'action'">
-        <a-space :size="4" class="instance-actions">
+        <a-space :size="2" class="instance-actions">
           <a-tooltip title="详情">
-            <a-button type="text" aria-label="详情" @click="openDetail(record)">
-              <icon-font iconClass="icon-opt-xiangqing" font-size="20px" color="#60666b" />
-            </a-button>
+            <a-button type="text" aria-label="详情" @click="openDetail(record)"><eye-outlined /></a-button>
           </a-tooltip>
           <a-tooltip title="运行日志">
             <a-button type="text" aria-label="运行日志" @click="openLog(record)"><file-search-outlined /></a-button>
@@ -66,7 +70,7 @@
           </a-tooltip>
           <a-tooltip :title="record.handleResult === 'fail' ? '重试' : '仅失败实例可重试'">
             <span class="retry-action">
-              <a-button type="text" aria-label="重试" :disabled="record.handleResult !== 'fail'" @click="retry(record)"><redo-outlined /></a-button>
+              <a-button type="text" aria-label="重试" :disabled="record.handleResult !== 'fail'" @click="retry(record)"><play-circle-outlined /></a-button>
             </span>
           </a-tooltip>
         </a-space>
@@ -80,7 +84,8 @@
 <script setup>
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import { message, Modal } from 'ant-design-vue/es';
-import { FileSearchOutlined, RedoOutlined, ReloadOutlined, StopOutlined } from '@ant-design/icons-vue';
+import { EyeOutlined, FileSearchOutlined, PlayCircleOutlined, ReloadOutlined, StopOutlined } from '@ant-design/icons-vue';
+import dayjs from 'dayjs';
 import { TaskInstanceApi } from '../api/TaskInstanceApi';
 import TaskInstanceDetail from './task-instance-detail.vue';
 import TaskInstanceLog from './task-instance-log.vue';
@@ -103,9 +108,21 @@ const columns = computed(() => props.embedded
   ? allColumns.filter((column) => !['taskName', 'taskCode'].includes(column.dataIndex))
   : allColumns);
 const tableRef = ref(null);
-const createWhere = () => ({ taskName: '', taskCode: '', executionType: undefined, handleResult: undefined, ...(props.taskId ? { taskId: props.taskId } : {}) });
+const createWhere = () => ({
+  keyword: '',
+  taskCode: '',
+  executionType: undefined,
+  handleResult: undefined,
+  startTimeFrom: undefined,
+  startTimeTo: undefined,
+  endTimeFrom: undefined,
+  endTimeTo: undefined,
+  ...(props.taskId ? { taskId: props.taskId } : {})
+});
 const where = ref(createWhere());
-const showSearch = ref(Boolean(props.embedded));
+const startTimeRange = ref([]);
+const endTimeRange = ref([]);
+const showSearch = ref(false);
 const current = ref(null);
 const logRecord = ref(null);
 const showDetail = ref(false);
@@ -113,7 +130,19 @@ const showLog = ref(false);
 let retryModal = null;
 let stopModal = null;
 const reload = () => tableRef.value?.reload();
-const reset = () => { where.value = createWhere(); reload(); };
+const reset = () => {
+  startTimeRange.value = [];
+  endTimeRange.value = [];
+  where.value = createWhere();
+  reload();
+};
+const applyTimeRange = (range, beginKey, endKey) => {
+  where.value[beginKey] = range?.[0] ? dayjs(range[0]).startOf('day').valueOf() : undefined;
+  where.value[endKey] = range?.[1] ? dayjs(range[1]).add(1, 'day').startOf('day').valueOf() : undefined;
+  reload();
+};
+const onStartTimeRangeChange = range => applyTimeRange(range, 'startTimeFrom', 'startTimeTo');
+const onEndTimeRangeChange = range => applyTimeRange(range, 'endTimeFrom', 'endTimeTo');
 const openDetail = record => { current.value = record; showDetail.value = true; };
 const openLog = record => { showDetail.value = false; logRecord.value = record; showLog.value = true; };
 const refreshInstance = async record => {
@@ -163,4 +192,5 @@ defineExpose({ reload, reset });
 <style scoped>
 .super-search { margin-top: 8px; }
 .instance-actions { white-space: nowrap; }
+.instance-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; }
 </style>

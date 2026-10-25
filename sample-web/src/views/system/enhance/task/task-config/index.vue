@@ -20,7 +20,7 @@
                   showTableTool :showToolTotal="false" fieldBusinessCode="TASK_CONFIG_TABLE_V2"
                 >
                   <template #toolLeft>
-                    <a-input v-model:value="where.taskName" class="search-input" :bordered="false" allow-clear placeholder="任务名称（回车搜索）" @pressEnter="reload">
+                    <a-input v-model:value="where.keyword" class="search-input" :bordered="false" allow-clear placeholder="任务名称或编码（回车搜索）" @pressEnter="reload">
                       <template #prefix><icon-font iconClass="icon-opt-search" /></template>
                     </a-input>
                     <a-divider type="vertical" class="divider" />
@@ -138,7 +138,7 @@ const columns = ref([
   { key: 'action', title: '操作', width: 190, isShow: true }
 ]);
 const tableRef = ref(null);
-const where = ref({ taskName: '' });
+const where = ref({ keyword: '' });
 const current = ref(null);
 const historyTask = ref(null);
 const showSearch = ref(false);
@@ -148,7 +148,7 @@ const showHistory = ref(false);
 const statusUpdating = ref(new Set());
 let actionModal = null;
 const reload = () => tableRef.value?.reload();
-const reset = () => { where.value = { taskName: '' }; reload(); };
+const reset = () => { where.value = { keyword: '' }; reload(); };
 const openEdit = record => {
   if (record && !canEdit(record)) return;
   current.value = record || null;
