@@ -77,25 +77,19 @@
                       />
                     </template>
                     <template v-else-if="column.key === 'action'">
-                      <a-space :size="16">
-                        <icon-font
-                          v-if="canEdit(record)"
-                          iconClass="icon-opt-bianji"
-                          font-size="24px"
-                          color="#60666b"
-                          title="编辑"
-                          @click="openEdit(record)"
-                        />
-                        <icon-font
-                          v-if="canEdit(record)"
-                          iconClass="icon-opt-shanchu"
-                          font-size="24px"
-                          color="#60666b"
-                          title="删除"
-                          @click="remove(record)"
-                        />
-                        <a v-if="canExecuteOnce(record)" @click="executeOnce(record)">执行一次</a>
-                        <a @click="openHistory(record)">运行日志</a>
+                      <a-space :size="2" class="task-config-actions">
+                        <a-tooltip v-if="canEdit(record)" title="编辑">
+                          <a-button type="text" aria-label="编辑" @click="openEdit(record)"><edit-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip v-if="canEdit(record)" title="删除">
+                          <a-button type="text" danger aria-label="删除" @click="remove(record)"><delete-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip v-if="canExecuteOnce(record)" title="执行一次">
+                          <a-button type="text" aria-label="执行一次" @click="executeOnce(record)"><thunderbolt-outlined /></a-button>
+                        </a-tooltip>
+                        <a-tooltip title="运行日志">
+                          <a-button type="text" aria-label="运行日志" @click="openHistory(record)"><file-search-outlined /></a-button>
+                        </a-tooltip>
                       </a-space>
                     </template>
                   </template>
@@ -117,7 +111,7 @@
 <script setup name="TaskConfig">
 import { onScopeDispose, ref } from 'vue';
 import { message, Modal } from 'ant-design-vue/es';
-import { PlusOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, EditOutlined, FileSearchOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons-vue';
 import { TaskConfigApi } from './api/TaskConfigApi';
 import TaskConfigAddEdit from './components/task-config-add-edit.vue';
 import TaskConfigDetail from './components/task-config-detail.vue';
@@ -133,9 +127,9 @@ const columns = ref([
   { dataIndex: 'executionType', title: '执行类型', width: 105, isShow: true },
   { dataIndex: 'executionDefinition', title: '执行定义', ellipsis: true, width: 210, isShow: true },
   { dataIndex: 'scheduleType', title: '调度方式', width: 115, isShow: true },
-  { dataIndex: 'status', title: '状态', width: 120, isShow: true },
+  { dataIndex: 'status', title: '状态', width: 120, align: 'center', isShow: true },
   { dataIndex: 'createTime', title: '创建时间', width: 175, isShow: true },
-  { key: 'action', title: '操作', width: 190, isShow: true }
+  { key: 'action', title: '操作', width: 150, align: 'center', isShow: true }
 ]);
 const tableRef = ref(null);
 const where = ref({ keyword: '' });
@@ -207,4 +201,6 @@ onScopeDispose(() => actionModal?.destroy());
 
 <style scoped>
 .super-search { margin-top: 8px; }
+.task-config-actions { white-space: nowrap; }
+.task-config-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; font-size: 18px; }
 </style>

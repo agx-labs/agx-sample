@@ -192,5 +192,5 @@ defineExpose({ reload, reset });
 <style scoped>
 .super-search { margin-top: 8px; }
 .instance-actions { white-space: nowrap; }
-.instance-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; }
+.instance-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; font-size: 18px; }
 </style>
