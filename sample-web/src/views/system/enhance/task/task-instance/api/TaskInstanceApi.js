@@ -43,6 +43,13 @@ export class TaskInstanceApi {
     return Request.post('/taskInstance/retry', params);
   }
   /**
+   * 停止运行中的任务实例
+   * POST /taskInstance/stop
+   */
+  static stop(params) {
+    return Request.post('/taskInstance/stop', params);
+  }
+  /**
    * 获取任务实例执行日志
    * POST /taskInstance/log
    * @param {Object} params - { taskInstId, schedulerLogId, fromLineNum }

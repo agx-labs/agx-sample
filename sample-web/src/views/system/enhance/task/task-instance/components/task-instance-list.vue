@@ -55,6 +55,7 @@
           <a-tooltip v-if="record.handleResult === 'running'" title="刷新状态">
             <reload-outlined style="font-size: 18px; color: #1890ff; cursor: pointer" @click="refreshInstance(record)" />
           </a-tooltip>
+          <a v-if="record.handleResult === 'running'" @click="stopInstance(record)">停止</a>
           <a-tooltip :title="record.handleResult === 'fail' ? '重试' : '仅失败实例可重试'">
             <a :class="{ disabledAction: record.handleResult !== 'fail' }" @click="retry(record)">重试</a>
           </a-tooltip>
@@ -100,6 +101,7 @@ const logRecord = ref(null);
 const showDetail = ref(false);
 const showLog = ref(false);
 let retryModal = null;
+let stopModal = null;
 const reload = () => tableRef.value?.reload();
 const reset = () => { where.value = createWhere(); reload(); };
 const openDetail = record => { current.value = record; showDetail.value = true; };
@@ -107,6 +109,22 @@ const openLog = record => { showDetail.value = false; logRecord.value = record; 
 const refreshInstance = async record => {
   await TaskInstanceApi.refresh({ taskInstId: record.taskInstId });
   reload();
+};
+const stopInstance = record => {
+  if (record.handleResult !== 'running' || stopModal) return;
+  stopModal = Modal.confirm({
+    title: '提示', content: `确定要停止任务「${record.taskName}」吗？`,
+    onCancel: () => { stopModal = null; },
+    onOk: async () => {
+      try {
+        await TaskInstanceApi.stop({ taskInstId: record.taskInstId });
+        message.success('停止请求已发送');
+        reload();
+      } finally {
+        stopModal = null;
+      }
+    }
+  });
 };
 const retry = record => {
   if (record.handleResult !== 'fail' || retryModal) return;
@@ -125,7 +143,10 @@ const retry = record => {
   });
 };
 watch(() => props.taskId, reset);
-onScopeDispose(() => retryModal?.destroy());
+onScopeDispose(() => {
+  retryModal?.destroy();
+  stopModal?.destroy();
+});
 defineExpose({ reload, reset });
 </script>
 
