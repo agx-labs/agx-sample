@@ -55,7 +55,7 @@
       </template>
       <template v-else-if="column.key === 'duration'">{{ durationOf(record) }}</template>
       <template v-else-if="column.key === 'action'">
-        <a-space :size="2" class="instance-actions">
+        <a-space :size="0" class="instance-actions">
           <a-tooltip title="详情">
             <a-button type="text" aria-label="详情" @click="openDetail(record)"><eye-outlined /></a-button>
           </a-tooltip>
@@ -192,5 +192,5 @@ defineExpose({ reload, reset });
 <style scoped>
 .super-search { margin-top: 8px; }
 .instance-actions { white-space: nowrap; }
-.instance-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; font-size: 18px; }
+.instance-actions :deep(.ant-btn) { width: 24px; min-width: 24px; height: 24px; padding: 0; font-size: 18px; }
 </style>

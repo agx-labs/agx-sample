@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :visible="visible" :width="760" :mask-closable="false" :keyboard="!saving" :closable="!saving"
+    :visible="visible" :width="1000" :mask-closable="false" :keyboard="!saving" :closable="!saving"
     :title="isUpdate ? '编辑任务' : '新建任务'" wrap-class-name="task-modal"
     :confirm-loading="saving" :ok-button-props="{ disabled: loading || !!loadError || locked }"
     :cancel-button-props="{ disabled: saving }" ok-text="确定" cancel-text="取消"

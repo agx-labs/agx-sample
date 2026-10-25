@@ -77,7 +77,7 @@
                       />
                     </template>
                     <template v-else-if="column.key === 'action'">
-                      <a-space :size="2" class="task-config-actions">
+                      <a-space :size="0" class="task-config-actions">
                         <a-tooltip v-if="canEdit(record)" title="编辑">
                           <a-button type="text" aria-label="编辑" @click="openEdit(record)"><edit-outlined /></a-button>
                         </a-tooltip>
@@ -202,5 +202,5 @@ onScopeDispose(() => actionModal?.destroy());
 <style scoped>
 .super-search { margin-top: 8px; }
 .task-config-actions { white-space: nowrap; }
-.task-config-actions :deep(.ant-btn) { width: 28px; min-width: 28px; height: 28px; padding: 0; font-size: 18px; }
+.task-config-actions :deep(.ant-btn) { width: 24px; min-width: 24px; height: 24px; padding: 0; font-size: 18px; }
 </style>

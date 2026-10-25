@@ -53,7 +53,9 @@
             v-model="form.executionDefinition"
             :language="editorLanguageOf(form.executionType)"
             :label="optionOf(executionTypes, form.executionType).label"
-            height="260px"
+            height="420px"
+            show-format
+            allow-fullscreen
             placeholder="请输入完整脚本正文"
           />
         </a-form-item>
