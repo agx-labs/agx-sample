@@ -49,15 +49,25 @@
       </template>
       <template v-else-if="column.key === 'duration'">{{ durationOf(record) }}</template>
       <template v-else-if="column.key === 'action'">
-        <a-space :size="16">
-          <icon-font iconClass="icon-opt-xiangqing" font-size="24px" color="#60666b" title="详情" @click="openDetail(record)" />
-          <a @click="openLog(record)">运行日志</a>
-          <a-tooltip v-if="record.handleResult === 'running'" title="刷新状态">
-            <reload-outlined style="font-size: 18px; color: #1890ff; cursor: pointer" @click="refreshInstance(record)" />
+        <a-space :size="4" class="instance-actions">
+          <a-tooltip title="详情">
+            <a-button type="text" aria-label="详情" @click="openDetail(record)">
+              <icon-font iconClass="icon-opt-xiangqing" font-size="20px" color="#60666b" />
+            </a-button>
           </a-tooltip>
-          <a v-if="record.handleResult === 'running'" @click="stopInstance(record)">停止</a>
+          <a-tooltip title="运行日志">
+            <a-button type="text" aria-label="运行日志" @click="openLog(record)"><file-search-outlined /></a-button>
+          </a-tooltip>
+          <a-tooltip v-if="record.handleResult === 'running'" title="刷新状态">
+            <a-button type="text" aria-label="刷新状态" @click="refreshInstance(record)"><reload-outlined /></a-button>
+          </a-tooltip>
+          <a-tooltip v-if="record.handleResult === 'running'" title="停止任务">
+            <a-button type="text" danger aria-label="停止任务" @click="stopInstance(record)"><stop-outlined /></a-button>
+          </a-tooltip>
           <a-tooltip :title="record.handleResult === 'fail' ? '重试' : '仅失败实例可重试'">
-            <a :class="{ disabledAction: record.handleResult !== 'fail' }" @click="retry(record)">重试</a>
+            <span class="retry-action">
+              <a-button type="text" aria-label="重试" :disabled="record.handleResult !== 'fail'" @click="retry(record)"><redo-outlined /></a-button>
+            </span>
           </a-tooltip>
         </a-space>
       </template>
@@ -70,7 +80,7 @@
 <script setup>
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import { message, Modal } from 'ant-design-vue/es';
-import { ReloadOutlined } from '@ant-design/icons-vue';
+import { FileSearchOutlined, RedoOutlined, ReloadOutlined, StopOutlined } from '@ant-design/icons-vue';
 import { TaskInstanceApi } from '../api/TaskInstanceApi';
 import TaskInstanceDetail from './task-instance-detail.vue';
 import TaskInstanceLog from './task-instance-log.vue';
@@ -87,7 +97,7 @@ const allColumns = [
   { dataIndex: 'startTime', title: '开始时间', width: 175, isShow: true },
   { dataIndex: 'endTime', title: '结束时间', width: 175, isShow: true },
   { key: 'duration', title: '耗时', width: 100, isShow: true },
-  { key: 'action', title: '操作', width: 220, isShow: true }
+  { key: 'action', title: '操作', width: 190, isShow: true }
 ];
 const columns = computed(() => props.embedded
   ? allColumns.filter((column) => !['taskName', 'taskCode'].includes(column.dataIndex))
@@ -152,5 +162,5 @@ defineExpose({ reload, reset });
 
 <style scoped>
 .super-search { margin-top: 8px; }
-.disabledAction { color: #bfbfbf; cursor: not-allowed; }
+.instance-actions { white-space: nowrap; }
 </style>
